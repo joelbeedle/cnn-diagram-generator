@@ -42,12 +42,8 @@ def translate_vertices(old_vertices, new_coords):
     Returns:
         np.array: A NumPy array containing the translated vertices.
     """
-    new_vertices = []
-    for (x1, y1, z1) in old_vertices:
-        new_vertices.append(
-            [x1 + new_coords[0], y1 + new_coords[1], z1 + new_coords[2]])
+    return old_vertices + np.array(new_coords, dtype=np.float32)
 
-    return np.array(new_vertices, dtype=np.float32)
 
 
 unit_cube_vertices = np.array([[1, 1, 1], [2, 1, 1], [2, 2, 1], [1, 2, 1],
