@@ -45,22 +45,6 @@ def translate_vertices(old_vertices, new_coords):
     return old_vertices + np.array(new_coords, dtype=np.float32)
 
 
-
-unit_cube_vertices = np.array([[1, 1, 1], [2, 1, 1], [2, 2, 1], [1, 2, 1],
-                               [1, 1, 2], [2, 1, 2], [2, 2, 2], [1, 2, 2]],
-                              dtype=np.float32)
-
-standard_vertices = np.array([[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0],
-                              [0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]],
-                             dtype=np.float32)
-
-edges = [(0, 1), (1, 2), (2, 3), (3, 0), (4, 5), (5, 6), (6, 7), (7, 4),
-         (0, 4), (1, 5), (2, 6), (3, 7)]
-
-faces = [(0, 1, 2, 3), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6),
-         (3, 0, 4, 7)]
-
-
 class CubeCollection:
     """
     A collection of Cube objects, used to manage and draw multiple cubes together.
@@ -128,7 +112,16 @@ class Cube:
 
         Args:
                 ax (Axes3D): The 3D axis on which to draw the cube.
-    """
+        """
+        standard_vertices = np.array([[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0],
+                                      [0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]],
+                                     dtype=np.float32)
+
+        edges = [(0, 1), (1, 2), (2, 3), (3, 0), (4, 5), (5, 6), (6, 7), (7, 4),
+                 (0, 4), (1, 5), (2, 6), (3, 7)]
+
+        faces = [(0, 1, 2, 3), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6),
+                 (3, 0, 4, 7)]
         temp_vertices = []
         for (x1, y1, z1) in standard_vertices:
             scaled = [x1 * self.width, y1 * self.depth, z1 * self.height]
