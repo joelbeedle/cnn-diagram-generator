@@ -71,7 +71,7 @@ class CubeCollection:
 
         Args:
             ax (Axes3D): The 3D axis on which to draw the cubes.
-        """ 
+        """
         for cube in self.cubes:
             cube.draw(ax)
 
@@ -113,15 +113,16 @@ class Cube:
         Args:
                 ax (Axes3D): The 3D axis on which to draw the cube.
         """
-        standard_vertices = np.array([[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0],
-                                      [0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]],
-                                     dtype=np.float32)
+        standard_vertices = np.array(
+            [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0], [0, 0, 1], [1, 0, 1],
+             [1, 1, 1], [0, 1, 1]],
+            dtype=np.float32)
 
-        edges = [(0, 1), (1, 2), (2, 3), (3, 0), (4, 5), (5, 6), (6, 7), (7, 4),
-                 (0, 4), (1, 5), (2, 6), (3, 7)]
+        edges = [(0, 1), (1, 2), (2, 3), (3, 0), (4, 5), (5, 6), (6, 7),
+                 (7, 4), (0, 4), (1, 5), (2, 6), (3, 7)]
 
-        faces = [(0, 1, 2, 3), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6),
-                 (3, 0, 4, 7)]
+        faces = [(0, 1, 2, 3), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5),
+                 (2, 3, 7, 6), (3, 0, 4, 7)]
         temp_vertices = []
         for (x1, y1, z1) in standard_vertices:
             scaled = [x1 * self.width, y1 * self.depth, z1 * self.height]
@@ -159,6 +160,7 @@ class Cube:
     def depth(self):
         return self.__depth
 
+
 def draw_connections(outbound: Cube, inbound: Cube, axis):
     """Draws connections between two adjacent cubes, with each four
     corners of the faces of the cubes that face each other connected.
@@ -168,6 +170,7 @@ def draw_connections(outbound: Cube, inbound: Cube, axis):
         inbound (Cube): The cube to which the connection is inbound.
         axis: The matplotlib 3D subplot 
     """
+
     def get_vertices(from_vertices, to_vertices):
         """Extracts vertices from `from_vertices` and `to_vertices`.
 
@@ -207,8 +210,6 @@ def draw_connections(outbound: Cube, inbound: Cube, axis):
         axis.plot([x_out, x_in], [y_out, y_in], [z_out, z_in], 'black')
 
 
-
-
 class Layer:
     """
     Represents a layer in a neural network model.
@@ -221,7 +222,7 @@ class Layer:
         color (str): The color of the layer cube.
         alpha (float): The transparency of the layer cube.
     """
-    
+
     def __init__(self, name, input_channels, output_channels, depth, color,
                  alpha) -> None:
         self.name = name
@@ -281,8 +282,8 @@ class Model:
         Draw the model's layers (cubes) and their connections on the provided 3D axis.
 
         Args:
-                axis (Axes3D): The 3D axis on which to draw the layers and connections.
-    """
+            axis (Axes3D): The 3D axis on which to draw the layers and connections.
+        """
         for cube in self._cubes:
             cube.draw(axis)
         for index, cube in enumerate(self._cubes):
@@ -290,21 +291,17 @@ class Model:
             if index != len(self._cubes) - 1:
                 draw_connections(cube, self._cubes[index + 1], axis)
 
+
 def main():
     # Example usage
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
-    #cube1 = Cube(5,5,1, 0, 0, 0, 'r', 0.5)
-    #cube2 = Cube(3,3,4, 1, 3, 1, 'b', 0.5)
     layer1 = Layer('Convolution', 64, 64, 5, 'r', 0.5)
     layer2 = Layer('BatchNormalization', 64, 64, 32, 'b', 0.5)
     layer3 = Layer('Convolution', 32, 32, 5, 'b', 0.5)
     model = Model([layer1, layer2, layer3])
     model.draw(ax)
-
-    #cube_collection.draw_cubes(ax)
-    #draw_connections(cube1, cube2, ax)
 
     # Set the aspect ratio of the plot to 'equal'
     limits = np.array([getattr(ax, f'get_{axis}lim')() for axis in 'xyz'])
@@ -312,5 +309,6 @@ def main():
 
     plt.show()
 
-if __name__=="__main__":
-   main()
+
+if __name__ == "__main__":
+    main()
