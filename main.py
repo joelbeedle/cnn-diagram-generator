@@ -297,24 +297,27 @@ class Model:
             if index != len(self._cubes) - 1:
                 draw_connections(cube, self._cubes[index + 1], axis)
 
+def main():
+    # Example usage
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
 
-# Example usage
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+    #cube1 = Cube(5,5,1, 0, 0, 0, 'r', 0.5)
+    #cube2 = Cube(3,3,4, 1, 3, 1, 'b', 0.5)
+    layer1 = Layer('Convolution', 64, 64, 5, 'r', 0.5)
+    layer2 = Layer('BatchNormalization', 64, 64, 32, 'b', 0.5)
+    layer3 = Layer('Convolution', 32, 32, 5, 'b', 0.5)
+    model = Model([layer1, layer2, layer3])
+    model.draw(ax)
 
-#cube1 = Cube(5,5,1, 0, 0, 0, 'r', 0.5)
-#cube2 = Cube(3,3,4, 1, 3, 1, 'b', 0.5)
-layer1 = Layer('Convolution', 64, 64, 5, 'r', 0.5)
-layer2 = Layer('BatchNormalization', 64, 64, 32, 'b', 0.5)
-layer3 = Layer('Convolution', 32, 32, 5, 'b', 0.5)
-model = Model([layer1, layer2, layer3])
-model.draw(ax)
+    #cube_collection.draw_cubes(ax)
+    #draw_connections(cube1, cube2, ax)
 
-#cube_collection.draw_cubes(ax)
-#draw_connections(cube1, cube2, ax)
+    # Set the aspect ratio of the plot to 'equal'
+    limits = np.array([getattr(ax, f'get_{axis}lim')() for axis in 'xyz'])
+    ax.set_box_aspect(np.ptp(limits, axis=1))
 
-# Set the aspect ratio of the plot to 'equal'
-limits = np.array([getattr(ax, f'get_{axis}lim')() for axis in 'xyz'])
-ax.set_box_aspect(np.ptp(limits, axis=1))
+    plt.show()
 
-plt.show()
+if __name__=="__main__":
+   main()
