@@ -166,18 +166,35 @@ class Cube:
     def depth(self):
         return self.__depth
 
-
 def draw_connections(outbound: Cube, inbound: Cube, axis):
-    """
-    Draw connections between two Cube objects.
+    """Draws connections between two adjacent cubes, with each four
+    corners of the faces of the cubes that face each other connected.
 
     Args:
-        outbound (Cube): The first Cube object.
-        inbound (Cube): The second Cube object.
-        axis (Axes3D): The 3D axis on which to draw the connections.
+        outbound (Cube): The cube from which the connection is outbound.
+        inbound (Cube): The cube to which the connection is inbound.
+        axis: The matplotlib 3D subplot 
     """
-
     def get_vertices(from_vertices, to_vertices):
+        """Extracts vertices from `from_vertices` and `to_vertices`.
+
+        Given two sets of vertices `from_vertices` and `to_vertices`,
+        returns two subsets of vertices consisting of the four vertices of
+        `from_vertices` that are on the face of the cube facing `to_vertices`,
+        and the four vertices of `to_vertices` that are on the face of the cube
+        facing `from_vertices`.
+
+        Args:
+            from_vertices (np.ndarray): The vertices of the first (outbound) cube 
+            to_vertices (np.ndarray): The vertices of the second (inbound) cube 
+
+        Returns:
+            tuple: A tuple of two lists of vertices. The first list contains
+                the four vertices of `from_vertices` that are on the face of
+                the cube facing the cube of `to_vertices`. The second list
+                contains the four vertices of `to_vertices` that are on the
+                face of the cube facing `from_vertices`.
+        """
         o = [2, 3, 6, 7]
         i = [0, 1, 4, 5]
         from_vertices_list = from_vertices.tolist()
@@ -189,18 +206,14 @@ def draw_connections(outbound: Cube, inbound: Cube, axis):
     out_vertices, in_vertices = get_vertices(outbound.vertices,
                                              inbound.vertices)
     connecting_edges = [(0, 1), (1, 0), (2, 3), (3, 2)]
-    edge_list = []
-    for edge in connecting_edges:
-        x_out = out_vertices[edge[0]][0]
-        x_in = in_vertices[edge[1]][0]
-        y_out = out_vertices[edge[0]][1]
-        y_in = in_vertices[edge[1]][1]
-        z_out = out_vertices[edge[0]][2]
-        z_in = in_vertices[edge[1]][2]
-        edge_list.append([(x_out, x_in), (y_out, y_in), (z_out, z_in)])
 
-    for edge in edge_list:
-        axis.plot(edge[0], edge[1], edge[2], 'black')
+    for edge in connecting_edges:
+        x_out, x_in = out_vertices[edge[0]][0], in_vertices[edge[1]][0]
+        y_out, y_in = out_vertices[edge[0]][1], in_vertices[edge[1]][1]
+        z_out, z_in = out_vertices[edge[0]][2], in_vertices[edge[1]][2]
+        axis.plot([x_out, x_in], [y_out, y_in], [z_out, z_in], 'black')
+
+
 
 
 class Layer:
