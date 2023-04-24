@@ -56,7 +56,7 @@ class CubeCollection:
     def __init__(self, cubes=[]):
         self.cubes = cubes
 
-    def add(self, cube):
+    def add(self, cube: 'Cube'):
         """
         Add a Cube object to the CubeCollection.
 
@@ -70,7 +70,7 @@ class CubeCollection:
         Draw all the cubes in the collection on the provided 3D axis.
 
         Args:
-                ax (Axes3D): The 3D axis on which to draw the cubes.
+            ax (Axes3D): The 3D axis on which to draw the cubes.
         """ 
         for cube in self.cubes:
             cube.draw(ax)
