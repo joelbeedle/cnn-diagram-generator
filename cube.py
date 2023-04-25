@@ -1,3 +1,13 @@
+"""
+Module for 3D Cube visualization for CNN network layers.
+
+This module provides a class to represent a 3D cube and a class to manage and draw multiple cubes together.
+
+Classes:
+Cube: Represents a 3D cube with attributes such as width, height, depth, x, y, z, color, and alpha. It also contains methods to draw and translate vertices.
+CubeCollection: A collection of Cube objects used to manage and draw multiple cubes together.
+
+"""
 import numpy as np
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
@@ -51,6 +61,7 @@ class Cube:
         z (float): The z-coordinate of the bottom left vertex of the cube.
         vertices (np.array): The vertices of the cube after scaling and translation.
     """
+
 
     def __init__(self, width, height, depth, x, y, z, colour, alpha) -> None:
         self.color = colour
