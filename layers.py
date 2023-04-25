@@ -36,8 +36,8 @@ class Layer(ABC):
         ConvolutionLayer: A class representing a convolutional layer in a CNN model. 
         BatchNormalization: A class representing a batch normalization layer in a CNN model.
     """
-    def __init__(self, input_channels, output_channels, height, width, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, input_channels, output_channels, height, width) -> None:
+        super().__init__()
         self._input_channels = input_channels
         self._output_channels = output_channels
         self._height = height
@@ -64,8 +64,8 @@ class Layer(ABC):
     def width(self):
         return self._width
 
-    def __eq__(self, __value: object) -> bool:
-        return self.__class__ == __value
+    def __eq__(self, other: object) -> bool:
+        return self.__class__ == other.__class__
 
     def __hash__(self) -> int:
         return hash(repr(self))
@@ -93,8 +93,8 @@ class ConvolutionLayer(Layer):
         compute_shape: Computes the shape of the layer's output.
 
     """
-    def __init__(self, input_channels, output_channels, height, width, kernel_size, dilation=1, stride=1, padding=0, *args, **kwargs) -> None:
-        super().__init__(input_channels, output_channels, height, width, *args, **kwargs)
+    def __init__(self, input_channels, output_channels, height, width, kernel_size, dilation=1, stride=1, padding=0) -> None:
+        super().__init__(input_channels, output_channels, height, width)
         self.kernel_size = kernel_size
         self.stride = stride
         self.padding = padding
@@ -102,8 +102,9 @@ class ConvolutionLayer(Layer):
 
     def compute_shape(self):
         from math import floor
-        new_dims = floor((self.height + 2 * self.padding - self.dilation * (self.kernel_size - 1) - 1)/self.stride + 1)
-        return new_dims
+        new_height = floor((self.height + 2 * self.padding - self.dilation * (self.kernel_size - 1) - 1)/self.stride + 1)
+        new_width = floor((self.width + 2 * self.padding - self.dilation * (self.kernel_size - 1) - 1)/self.stride + 1)
+        return self.output_channels, new_height, new_width
 
 
 class BatchNormalization(Layer):
@@ -119,9 +120,9 @@ class BatchNormalization(Layer):
         compute_shape: Computes the shape of the layer's output.
 
     """
-    def __init__(self, num_features, height, width, momentum=0.1, *args, **kwargs):
-        super().__init__(num_features, num_features, height, width, *args, **kwargs)
+    def __init__(self, num_features, height, width, momentum=0.1):
+        super().__init__(num_features, num_features, height, width)
         self.momentum = momentum
 
     def compute_shape(self):
-        return super().compute_shape()
+        return self.output_channels, self.height, self.width
