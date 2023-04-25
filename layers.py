@@ -8,8 +8,34 @@ Classes:
     BatchNormalization: A class representing a batch normalization layer in a CNN model.
 """
 from abc import ABC, abstractmethod
+import tensorflow as tf
 
+class NewLayer():
+    def __init__(self, output_shape, name=None, *args, **kwargs) -> None:
+        self.output_shape = output_shape
+        self.height = self.output_shape[0]
+        self.width = self.output_shape[0]
+        self.channels = output_shape[-1]
+        
+class WrapperLayer(NewLayer):
+    def __init__(self, original_layer, output_shape=None, *args, **kwargs) -> None:
+        self._original_layer = original_layer
+        self.output_shape = self._get_output_shape()
+        self.name = self._original_layer.__class__.__name__
+        super().__init__(self.output_shape, *args, **kwargs)
 
+        
+    def _get_output_shape(self):
+        if isinstance(self._original_layer, tf.keras.layers.Layer):
+            if isinstance(self._original_layer.output_shape, tuple):
+                shape = self._original_layer.output_shape
+            elif isinstance(self._original_layer.output_shape, list) and len(
+                self._original_layer.output_shape) == 1:
+                shape = self._original_layer.output_shape[0]
+            
+            shape = shape[1:]
+            return shape
+                
 class Layer(ABC):
     """
     An abstract base class representing a layer in a convolutional neural network (CNN) model. 
@@ -71,7 +97,6 @@ class Layer(ABC):
 
     def __hash__(self) -> int:
         return hash(repr(self))
-
 
 class ConvolutionLayer(Layer):
     """A convolutional layer in a convolutional neural network.

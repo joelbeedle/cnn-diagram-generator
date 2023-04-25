@@ -29,7 +29,7 @@ class Model:
         _cubes (list): A list of Cube objects representing the layers in the model.
     """
 
-    def __init__(self, layers: list[Layer] = [], alpha=0.5):
+    def __init__(self, layers = [], alpha=0.5):
 
         self.layers = layers
         self._cubes: list[Cube] = []
@@ -105,14 +105,15 @@ class Model:
     def _update_model(self, layers):
         self._cubes = []
 
-        def get_color(layer: Type):
-            name_map = {ConvolutionLayer: 'r', BatchNormalization: 'b'}
-            return name_map[layer]
+        def get_color(idx):
+            name_map = {1: 'r', 2: 'b'}
+            index = idx % len(name_map.items())
+            return name_map[index]
 
         for layer in layers:
             self._cubes.append(
-                Cube(layer.height, layer.width, layer.input_channels, 0, 0, 0,
-                     get_color(type(layer)), self.alpha))
+                Cube(layer.height, layer.width, layer.channels, 0, 0, 0,
+                     'r', self.alpha))
 
         # We can leave the largest cube where it is, as it is the largest.
         # We need to move others up in the graph so that they are central
