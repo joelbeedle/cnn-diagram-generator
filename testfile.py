@@ -18,8 +18,7 @@ model = tf.keras.Sequential([
     tf.keras.layers.Dense(units=10, activation='softmax')
 ])
 
-    
-fig = plt.figure()
+fig = plt.figure(figsize=(13,8), dpi=100)
 ax = fig.add_subplot(111, projection='3d')
 
 diagram = Diagram(model)
@@ -28,5 +27,5 @@ diagram.draw(ax)
 
 limits = np.array([getattr(ax, f'get_{axis}lim')() for axis in 'xyz'])
 ax.set_box_aspect(np.ptp(limits, axis=1))
-
+ax.set_axis_off()
 plt.show()
