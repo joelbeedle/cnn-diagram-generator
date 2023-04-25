@@ -5,7 +5,7 @@ layers and draw them along with their connections.
 
 import numpy as np
 import matplotlib.pyplot as plt
-from layers import Layer
+from layers import ConvolutionLayer, BatchNormalization
 from model import Model
 
 def main():
@@ -14,9 +14,9 @@ def main():
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
-    layer1 = Layer('Convolution', 64, 64, 5, 'r', 0.5)
-    layer2 = Layer('BatchNormalization', 64, 64, 32, 'b', 0.5)
-    layer3 = Layer('Convolution', 32, 32, 5, 'b', 0.5)
+    layer1 = ConvolutionLayer(3, 3, 64, 64, 1)
+    layer2 = BatchNormalization(10, 32, 32)
+    layer3 = ConvolutionLayer(10, 10, 32, 32, 1)
     model = Model([layer1, layer2, layer3])
     model.draw(ax)
 
