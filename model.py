@@ -1,4 +1,22 @@
-from layers import Layer
+"""
+This module defines the Model class, which is used to represent a convolutional
+neural network (CNN) model. It is composed of multiple layers that transform
+the input image through convolution, pooling, and activation functions
+before producing the output predictions. 
+
+The Model class contains a list of Layer instances that make up the neural network.
+It provides methods for adding new layers to the model, computing the output shape
+of the model, and generating a visualization of the model.
+
+Classes:
+    Model: A class representing a convolutional neural network (CNN) model. 
+
+Functions:
+    draw_connections: Draws the connections between layers in a CNN model.
+    get_vertices: Returns the coordinates of the vertices for each layer in a CNN model.
+"""
+from typing import Type
+from layers import Layer, ConvolutionLayer, BatchNormalization
 from cube import Cube
 
 class Model:
@@ -10,18 +28,18 @@ class Model:
         _cubes (list): A list of Cube objects representing the layers in the model.
     """
 
-    def __init__(self, layers: list[Layer]):
+    def __init__(self, layers: list[Layer], alpha=0.5):
 
-        def get_color(name):
-            name_map = {'Convolution': 'r', 'BatchNormalization': 'b'}
-            return name_map[name]
+        def get_color(layer: Type):
+            name_map = {ConvolutionLayer: 'r', BatchNormalization: 'b'}
+            return name_map[layer]
 
         self.layers = layers
         self._cubes: list[Cube] = []
         for layer in layers:
             self._cubes.append(
-                Cube(layer.input_channels, layer.input_channels, layer.depth,
-                     0, 0, 0, get_color(layer.name), layer.alpha))
+                Cube(layer.height, layer.width, layer.input_channels,
+                     0, 0, 0, get_color(type(layer)), alpha))
 
         # We can leave the largest cube where it is, as it is the largest.
         # We need to move others up in the graph so that they are central
@@ -37,7 +55,7 @@ class Model:
                 z_offset = (largest_cube.height - cube.height) / 2
                 y_offset = 0  # Assuming all cubes are on the same z-plane
 
-                if prev_cube != None:
+                if prev_cube is not None:
                     y_offset = prev_cube.depth + prev_cube.y + 10  # Placeholder figure for distance apart
                 # Translate the cube
                 cube.x += x_offset
