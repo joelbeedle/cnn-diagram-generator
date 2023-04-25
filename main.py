@@ -15,9 +15,11 @@ def main():
     ax = fig.add_subplot(111, projection='3d')
 
     layer1 = ConvolutionLayer(3, 3, 64, 64, 1)
-    layer2 = BatchNormalization(10, 32, 32)
-    layer3 = ConvolutionLayer(10, 10, 32, 32, 1)
+    layer2 = BatchNormalization(12, 32, 32)
+    layer3 = ConvolutionLayer(12, 12, 32, 32, 1)
     model = Model([layer1, layer2, layer3])
+    layer4 = ConvolutionLayer(12, 6, 16, 16, 1)
+    model.add(layer4)
     model.draw(ax)
 
     # Set the aspect ratio of the plot to 'equal'

@@ -19,6 +19,7 @@ from typing import Type
 from layers import Layer, ConvolutionLayer, BatchNormalization
 from cube import Cube
 
+
 class Model:
     """
     Represents a neural network model, with a list of layers.
@@ -30,38 +31,10 @@ class Model:
 
     def __init__(self, layers: list[Layer], alpha=0.5):
 
-        def get_color(layer: Type):
-            name_map = {ConvolutionLayer: 'r', BatchNormalization: 'b'}
-            return name_map[layer]
-
         self.layers = layers
         self._cubes: list[Cube] = []
-        for layer in layers:
-            self._cubes.append(
-                Cube(layer.height, layer.width, layer.input_channels,
-                     0, 0, 0, get_color(type(layer)), alpha))
-
-        # We can leave the largest cube where it is, as it is the largest.
-        # We need to move others up in the graph so that they are central
-        # Find the largest cube
-        largest_cube = max(self._cubes,
-                           key=lambda cube: cube.width * cube.height)
-        prev_cube = None
-        # Translate the other cubes to align their center with the largest cube's center
-        for i, cube in enumerate(self._cubes):
-            if cube != largest_cube:
-                # Calculate the offset to translate the cube
-                x_offset = (largest_cube.width - cube.width) / 2
-                z_offset = (largest_cube.height - cube.height) / 2
-                y_offset = 0  # Assuming all cubes are on the same z-plane
-
-                if prev_cube is not None:
-                    y_offset = prev_cube.depth + prev_cube.y + 10  # Placeholder figure for distance apart
-                # Translate the cube
-                cube.x += x_offset
-                cube.y += y_offset
-                cube.z += z_offset
-            prev_cube = cube
+        self.alpha = alpha
+        self._update_model(layers)
 
     def draw(self, axis):
         """
@@ -124,3 +97,41 @@ class Model:
             y_out, y_in = out_vertices[edge[0]][1], in_vertices[edge[1]][1]
             z_out, z_in = out_vertices[edge[0]][2], in_vertices[edge[1]][2]
             axis.plot([x_out, x_in], [y_out, y_in], [z_out, z_in], 'black')
+
+    def add(self, layer):
+        self.layers.append(layer)
+        self._update_model(self.layers)
+
+    def _update_model(self, layers):
+        self._cubes = []
+
+        def get_color(layer: Type):
+            name_map = {ConvolutionLayer: 'r', BatchNormalization: 'b'}
+            return name_map[layer]
+
+        for layer in layers:
+            self._cubes.append(
+                Cube(layer.height, layer.width, layer.input_channels, 0, 0, 0,
+                     get_color(type(layer)), self.alpha))
+
+        # We can leave the largest cube where it is, as it is the largest.
+        # We need to move others up in the graph so that they are central
+        # Find the largest cube
+        largest_cube = max(self._cubes,
+                           key=lambda cube: cube.width * cube.height)
+        prev_cube = None
+        # Translate the other cubes to align their center with the largest cube's center
+        for i, cube in enumerate(self._cubes):
+            if cube != largest_cube:
+                # Calculate the offset to translate the cube
+                x_offset = (largest_cube.width - cube.width) / 2
+                z_offset = (largest_cube.height - cube.height) / 2
+                y_offset = 0  # Assuming all cubes are on the same z-plane
+
+                if prev_cube is not None:
+                    y_offset = prev_cube.depth + prev_cube.y + 10  # Placeholder figure for distance apart
+                # Translate the cube
+                cube.x += x_offset
+                cube.y += y_offset
+                cube.z += z_offset
+            prev_cube = cube
