@@ -29,7 +29,7 @@ class Model:
         _cubes (list): A list of Cube objects representing the layers in the model.
     """
 
-    def __init__(self, layers: list[Layer], alpha=0.5):
+    def __init__(self, layers: list[Layer] = [], alpha=0.5):
 
         self.layers = layers
         self._cubes: list[Cube] = []
