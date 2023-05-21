@@ -1,13 +1,12 @@
 """
-This module defines the Layer class and its subclasses, which are used to represent the different types of layers that
-can be used in a convolutional neural network (CNN) model.
+This module defines the Layer class and its subclasses, which are used to represent the
+different types of layers that can be used in a convolutional neural network (CNN) model
 
 Classes:
-    Layer: An abstract base class representing a layer in a CNN model. 
-    ConvolutionLayer: A class representing a convolutional layer in a CNN model. 
+    Layer: An abstract base class representing a layer in a CNN model.
+    ConvolutionLayer: A class representing a convolutional layer in a CNN model.
     BatchNormalization: A class representing a batch normalization layer in a CNN model.
 """
-from abc import ABC, abstractmethod
 import tensorflow as tf
 
 
@@ -136,7 +135,7 @@ class BatchNormalization(Layer):
         self.momentum = momentum
 
     def compute_shape(self):
-        return self.output_channels, self.height, self.width
+        return self.num_features, self.height, self.width
 
 
 class Dense(Layer):

@@ -1,6 +1,7 @@
 """
-This script is used for visualizing a neural network architecture in 3D using NumPy and Matplotlib. It provides classes and functions to create and manipulate cubes representing network
-layers and draw them along with their connections.
+This script is used for visualizing a neural network architecture in 3D using NumPy and
+Matplotlib. It provides classes and functions to create and manipulate cubes representing
+network layers and draw them along with their connections.
 """
 
 import numpy as np

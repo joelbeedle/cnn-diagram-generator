@@ -2,21 +2,19 @@
 This module defines the Model class, which is used to represent a convolutional
 neural network (CNN) model. It is composed of multiple layers that transform
 the input image through convolution, pooling, and activation functions
-before producing the output predictions. 
+before producing the output predictions.
 
 The Model class contains a list of Layer instances that make up the neural network.
 It provides methods for adding new layers to the model, computing the output shape
 of the model, and generating a visualization of the model.
 
 Classes:
-    Model: A class representing a convolutional neural network (CNN) model. 
+    Model: A class representing a convolutional neural network (CNN) model.
 
 Functions:
     draw_connections: Draws the connections between layers in a CNN model.
     get_vertices: Returns the coordinates of the vertices for each layer in a CNN model.
 """
-from typing import Type
-from layers import Layer, ConvolutionLayer, BatchNormalization
 from cube import Cube
 
 

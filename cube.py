@@ -1,11 +1,14 @@
 """
 Module for 3D Cube visualization for CNN network layers.
 
-This module provides a class to represent a 3D cube and a class to manage and draw multiple cubes together.
+This module provides a class to represent a 3D cube and a class to manage and draw
+multiple cubes together.
 
 Classes:
-Cube: Represents a 3D cube with attributes such as width, height, depth, x, y, z, color, and alpha. It also contains methods to draw and translate vertices.
-CubeCollection: A collection of Cube objects used to manage and draw multiple cubes together.
+Cube: Represents a 3D cube with attributes such as width, height, depth, x, y, z, color,
+    and alpha. It also contains methods to draw and translate vertices.
+CubeCollection: A collection of Cube objects used to manage and draw multiple cubes
+    together.
 
 """
 import numpy as np
