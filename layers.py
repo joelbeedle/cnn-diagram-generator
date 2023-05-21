@@ -10,93 +10,49 @@ Classes:
 from abc import ABC, abstractmethod
 import tensorflow as tf
 
-class NewLayer():
-    def __init__(self, output_shape, name=None, *args, **kwargs) -> None:
+
+class Layer:
+    def __init__(
+        self, previous_layer, output_shape, name=None, *args, **kwargs
+    ) -> None:
+        self.previous_layer = previous_layer
         self.output_shape = output_shape
         self.height = self.output_shape[0]
         self.width = self.output_shape[0]
         self.channels = output_shape[-1]
-        
-class WrapperLayer(NewLayer):
-    def __init__(self, original_layer, output_shape=None, *args, **kwargs) -> None:
+
+
+class WrapperLayer(Layer):
+    def __init__(
+        self, previous_layer, original_layer, output_shape=None, *args, **kwargs
+    ) -> None:
+        self.previous_layer = previous_layer
         self._original_layer = original_layer
         self.output_shape = self._get_output_shape()
         self.name = self._original_layer.__class__.__name__
-        super().__init__(self.output_shape, *args, **kwargs)
+        super().__init__(self.previous_layer, self.output_shape, *args, **kwargs)
 
-        
     def _get_output_shape(self):
         if isinstance(self._original_layer, tf.keras.layers.Layer):
-            if isinstance(self._original_layer.output_shape, tuple):
-                shape = self._original_layer.output_shape
-            elif isinstance(self._original_layer.output_shape, list) and len(
-                self._original_layer.output_shape) == 1:
-                shape = self._original_layer.output_shape[0]
-            
+            output_shape = self._original_layer.output_shape
+            if isinstance(output_shape, tuple):
+                print(output_shape, len(output_shape))
+                if len(output_shape) == 2:
+                    print(self)
+                    shape = (
+                        self.previous_layer.height,
+                        self.previous_layer.width,
+                        output_shape[1],
+                    )
+                else:
+                    shape = output_shape
+            elif isinstance(output_shape, list) and len(output_shape) == 1:
+                print("example ", output_shape)
+                shape = output_shape[0]
+
             shape = shape[1:]
             return shape
-                
-class Layer(ABC):
-    """
-    An abstract base class representing a layer in a convolutional neural network (CNN) model. 
 
-    Attributes:
-        name (str): The name of the layer.
-
-    Properties:
-        input_channels (int): The number of input channels for the layer. 
-        output_channels (int): The number of output channels for the layer.
-        height (int): The height of the layer.
-        width (int): The width of the layer.
-
-    Methods:
-        compute_shape: Abstract method that computes the output shape of the layer.
-
-    Overrides:
-        __eq__(self, __value: object) -> bool: Overrides the default __eq__ method to check if two layers are of the same
-        class.
-        __hash__(self) -> int: Overrides the default __hash__ method to allow for hashing of layers.
-
-    Subclasses should implement the abstract method compute_shape, which should compute the output shape of the layer.
-
-    Subclasses:
-        ConvolutionLayer: A class representing a convolutional layer in a CNN model. 
-        BatchNormalization: A class representing a batch normalization layer in a CNN model.
-    """
-
-    def __init__(self, input_channels, output_channels, height, width) -> None:
-        super().__init__()
-        self._input_channels = input_channels
-        self._output_channels = output_channels
-        self._height = height
-        self._width = width
-        self.name = str(self)
-
-    @abstractmethod
-    def compute_shape(self):
-        pass
-
-    @property
-    def input_channels(self):
-        return self._input_channels
-
-    @property
-    def output_channels(self):
-        return self._output_channels
-
-    @property
-    def height(self):
-        return self._height
-
-    @property
-    def width(self):
-        return self._width
-
-    def __eq__(self, other: object) -> bool:
-        return self.__class__ == other.__class__
-
-    def __hash__(self) -> int:
-        return hash(repr(self))
 
 class ConvolutionLayer(Layer):
     """A convolutional layer in a convolutional neural network.
@@ -122,16 +78,19 @@ class ConvolutionLayer(Layer):
 
     """
 
-    def __init__(self,
-                 input_channels,
-                 output_channels,
-                 height,
-                 width,
-                 kernel_size,
-                 dilation=1,
-                 stride=1,
-                 padding=0) -> None:
-        super().__init__(input_channels, output_channels, height, width)
+    def __init__(
+        self,
+        input_channels,
+        output_channels,
+        height,
+        width,
+        kernel_size,
+        dilation=1,
+        stride=1,
+        padding=0,
+    ) -> None:
+        output_shape = (height, width, output_channels)
+        super().__init__(output_shape, self.__class__.__name__)
         self.kernel_size = kernel_size
         self.stride = stride
         self.padding = padding
@@ -139,10 +98,22 @@ class ConvolutionLayer(Layer):
 
     def compute_shape(self):
         from math import floor
-        new_height = floor((self.height + 2 * self.padding - self.dilation *
-                            (self.kernel_size - 1) - 1) / self.stride + 1)
-        new_width = floor((self.width + 2 * self.padding - self.dilation *
-                           (self.kernel_size - 1) - 1) / self.stride + 1)
+
+        new_height = floor(
+            (
+                self.height
+                + 2 * self.padding
+                - self.dilation * (self.kernel_size - 1)
+                - 1
+            )
+            / self.stride
+            + 1
+        )
+        new_width = floor(
+            (self.width + 2 * self.padding - self.dilation * (self.kernel_size - 1) - 1)
+            / self.stride
+            + 1
+        )
         return self.output_channels, new_height, new_width
 
 
@@ -166,3 +137,11 @@ class BatchNormalization(Layer):
 
     def compute_shape(self):
         return self.output_channels, self.height, self.width
+
+
+class Dense(Layer):
+    """A dense layer in a convolutional neural network."""
+
+    def __init__(self, output_dim, *args, **kwargs):
+        self.output_dim = output_dim
+        super().__init__((output_dim,), *args, **kwargs)

@@ -29,8 +29,7 @@ class Model:
         _cubes (list): A list of Cube objects representing the layers in the model.
     """
 
-    def __init__(self, layers = [], alpha=0.5):
-
+    def __init__(self, layers=[], alpha=0.5):
         self.layers = layers
         self._cubes: list[Cube] = []
         self.alpha = alpha
@@ -57,7 +56,7 @@ class Model:
         Args:
             outbound (Cube): The cube from which the connection is outbound.
             inbound (Cube): The cube to which the connection is inbound.
-            axis: The matplotlib 3D subplot 
+            axis: The matplotlib 3D subplot
         """
 
         def get_vertices(from_vertices, to_vertices):
@@ -70,8 +69,8 @@ class Model:
             facing `from_vertices`.
 
             Args:
-                from_vertices (np.ndarray): The vertices of the first (outbound) cube 
-                to_vertices (np.ndarray): The vertices of the second (inbound) cube 
+                from_vertices (np.ndarray): The vertices of the first (outbound) cube
+                to_vertices (np.ndarray): The vertices of the second (inbound) cube
 
             Returns:
                 tuple: A tuple of two lists of vertices. The first list contains
@@ -88,15 +87,14 @@ class Model:
             correct_to_vertices = [to_vertices_list[n] for n in i]
             return correct_from_vertices, correct_to_vertices
 
-        out_vertices, in_vertices = get_vertices(outbound.vertices,
-                                                 inbound.vertices)
+        out_vertices, in_vertices = get_vertices(outbound.vertices, inbound.vertices)
         connecting_edges = [(0, 1), (1, 0), (2, 3), (3, 2)]
 
         for edge in connecting_edges:
             x_out, x_in = out_vertices[edge[0]][0], in_vertices[edge[1]][0]
             y_out, y_in = out_vertices[edge[0]][1], in_vertices[edge[1]][1]
             z_out, z_in = out_vertices[edge[0]][2], in_vertices[edge[1]][2]
-            axis.plot([x_out, x_in], [y_out, y_in], [z_out, z_in], 'black')
+            axis.plot([x_out, x_in], [y_out, y_in], [z_out, z_in], "black")
 
     def add(self, layer):
         self.layers.append(layer)
@@ -106,20 +104,21 @@ class Model:
         self._cubes = []
 
         def get_color(idx):
-            name_map = {1: 'r', 2: 'b'}
+            name_map = {1: "r", 2: "b"}
             index = idx % len(name_map.items())
             return name_map[index]
 
         for layer in layers:
             self._cubes.append(
-                Cube(layer.height, layer.width, layer.channels, 0, 0, 0,
-                     'r', self.alpha))
+                Cube(
+                    layer.height, layer.width, layer.channels, 0, 0, 0, "r", self.alpha
+                )
+            )
 
         # We can leave the largest cube where it is, as it is the largest.
         # We need to move others up in the graph so that they are central
         # Find the largest cube
-        largest_cube = max(self._cubes,
-                           key=lambda cube: cube.width * cube.height)
+        largest_cube = max(self._cubes, key=lambda cube: cube.width * cube.height)
         prev_cube = None
         # Translate the other cubes to align their center with the largest cube's center
         for i, cube in enumerate(self._cubes):
@@ -130,7 +129,9 @@ class Model:
                 y_offset = 0  # Assuming all cubes are on the same z-plane
 
                 if prev_cube is not None:
-                    y_offset = prev_cube.depth + prev_cube.y + 10  # Placeholder figure for distance apart
+                    y_offset = (
+                        prev_cube.depth + prev_cube.y + 10
+                    )  # Placeholder figure for distance apart
                 # Translate the cube
                 cube.x += x_offset
                 cube.y += y_offset

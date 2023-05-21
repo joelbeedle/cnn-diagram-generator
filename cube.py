@@ -23,7 +23,7 @@ class CubeCollection:
     def __init__(self, cubes=[]):
         self.cubes = cubes
 
-    def add(self, cube: 'Cube'):
+    def add(self, cube: "Cube"):
         """
         Add a Cube object to the CubeCollection.
 
@@ -62,7 +62,6 @@ class Cube:
         vertices (np.array): The vertices of the cube after scaling and translation.
     """
 
-
     def __init__(self, width, height, depth, x, y, z, colour, alpha) -> None:
         self.color = colour
         self.alpha = alpha
@@ -82,34 +81,65 @@ class Cube:
                 ax (Axes3D): The 3D axis on which to draw the cube.
         """
         standard_vertices = np.array(
-            [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0], [0, 0, 1], [1, 0, 1],
-             [1, 1, 1], [0, 1, 1]],
-            dtype=np.float32)
+            [
+                [0, 0, 0],
+                [1, 0, 0],
+                [1, 1, 0],
+                [0, 1, 0],
+                [0, 0, 1],
+                [1, 0, 1],
+                [1, 1, 1],
+                [0, 1, 1],
+            ],
+            dtype=np.float32,
+        )
 
-        edges = [(0, 1), (1, 2), (2, 3), (3, 0), (4, 5), (5, 6), (6, 7),
-                 (7, 4), (0, 4), (1, 5), (2, 6), (3, 7)]
+        edges = [
+            (0, 1),
+            (1, 2),
+            (2, 3),
+            (3, 0),
+            (4, 5),
+            (5, 6),
+            (6, 7),
+            (7, 4),
+            (0, 4),
+            (1, 5),
+            (2, 6),
+            (3, 7),
+        ]
 
-        faces = [(0, 1, 2, 3), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5),
-                 (2, 3, 7, 6), (3, 0, 4, 7)]
+        faces = [
+            (0, 1, 2, 3),
+            (4, 5, 6, 7),
+            (0, 1, 5, 4),
+            (1, 2, 6, 5),
+            (2, 3, 7, 6),
+            (3, 0, 4, 7),
+        ]
         temp_vertices = []
-        for (x1, y1, z1) in standard_vertices:
+        for x1, y1, z1 in standard_vertices:
             scaled = [x1 * self.width, y1 * self.depth, z1 * self.height]
             temp_vertices.append(scaled)
         pre_translated = np.array(temp_vertices, dtype=np.float32)
-        translated = self._translate_vertices(pre_translated,
-                                              (self.x, self.y, self.z))
+        translated = self._translate_vertices(pre_translated, (self.x, self.y, self.z))
 
         self.vertices = np.array(translated, dtype=np.float32)
         # Plot the edges of the cube
         for edge in edges:
-            ax.plot(self.vertices[edge, 0], self.vertices[edge, 1],
-                    self.vertices[edge, 2], 'black')
+            ax.plot(
+                self.vertices[edge, 0],
+                self.vertices[edge, 1],
+                self.vertices[edge, 2],
+                "black",
+            )
 
         # Create the polygons for each face
         polygons = [
-            Poly3DCollection([self.vertices[list(face)]],
-                             alpha=self.alpha,
-                             facecolor=self.color) for face in faces
+            Poly3DCollection(
+                [self.vertices[list(face)]], alpha=self.alpha, facecolor=self.color
+            )
+            for face in faces
         ]
 
         # Add the polygons to the plot
@@ -129,11 +159,20 @@ class Cube:
             np.array: A NumPy array containing the translated vertices.
         """
         standard_vertices = np.array(
-            [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0], [0, 0, 1], [1, 0, 1],
-             [1, 1, 1], [0, 1, 1]],
-            dtype=np.float32)
+            [
+                [0, 0, 0],
+                [1, 0, 0],
+                [1, 1, 0],
+                [0, 1, 0],
+                [0, 0, 1],
+                [1, 0, 1],
+                [1, 1, 1],
+                [0, 1, 1],
+            ],
+            dtype=np.float32,
+        )
         new_vertices = []
-        for (x1, y1, z1) in standard_vertices:
+        for x1, y1, z1 in standard_vertices:
             new_vertices.append([x1 + x, y1 + y, z1 + z])
 
         return np.array(new_vertices, dtype=np.float32)
